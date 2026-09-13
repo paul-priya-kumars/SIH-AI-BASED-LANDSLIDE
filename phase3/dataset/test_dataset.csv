@@ -1,0 +1,4 @@
+rainfall_mm,soil_moisture_pct,slope_deg,elevation_m,temperature_c,river_level_m,vegetation_index,landslide_history,risk_level
+85,80,38,350,21,3.5,0.4,1,HIGH
+55,60,25,280,23,2.5,0.58,1,MEDIUM
+25,35,12,180,27,1.6,0.75,0,LOW
