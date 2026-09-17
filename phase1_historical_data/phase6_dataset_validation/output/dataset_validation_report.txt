@@ -1,0 +1,119 @@
+================================================================================
+M2-C PHASE 6 - DATASET VALIDATION REPORT
+================================================================================
+Generated at: 2026-09-16 14:06:39
+
+1. DATASET SUMMARY
+----------------------------------------
+Input file: historical_landslide_features.csv
+Record count: 4
+Column count: 27
+Columns: landslide_id, date, latitude, longitude, location, district, state, country, source, source_url, severity, description, data_quality_status, ndvi, ndvi_status, rainfall_24h, rainfall_3d, rainfall_7d, rainfall_status, elevation_m, elevation_status, slope_deg, slope_status, aspect_deg, aspect_status, feature_extraction_status, data_source_type
+
+2. STRUCTURAL VALIDATION
+----------------------------------------
+Result: PASS_WITH_WARNINGS
+Issues found:
+  * WARNING: Completely empty columns: ['rainfall_24h', 'rainfall_3d', 'rainfall_7d']
+
+3. HISTORICAL FIELD VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+4. SPATIAL VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+5. ENVIRONMENTAL FEATURE VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+6. MISSING DATA STATISTICS
+----------------------------------------
+Feature         Total    Valid    Missing  Missing % 
+-------------------------------------------------------
+landslide_id    4        4        0        0.0       
+date            4        4        0        0.0       
+latitude        4        4        0        0.0       
+longitude       4        4        0        0.0       
+ndvi            4        4        0        0.0       
+elevation_m     4        4        0        0.0       
+slope_deg       4        4        0        0.0       
+aspect_deg      4        4        0        0.0       
+
+7. DUPLICATE VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+8. SYNTHETIC DATA VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+!!! IMPORTANT WARNING !!!
+CURRENT ENVIRONMENTAL DATA IS SYNTHETIC DEMO DATA AND MUST NOT BE
+REPRESENTED AS REAL MEASUREMENTS.
+
+9. CROSS-DATASET CONSISTENCY
+----------------------------------------
+Result: PASS
+  No issues found
+
+10. FEATURE EXTRACTION STATUS CONSISTENCY
+----------------------------------------
+Result: PASS
+  No issues found
+
+11. RAINFALL HANDLING VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+12. DATA LEAKAGE / TARGET VALIDATION
+----------------------------------------
+Result: PASS
+  No issues found
+
+13. OVERALL VALIDATION RESULT
+----------------------------------------
+Overall Status: PASS_WITH_WARNINGS
+Reason: Found 1 warning(s)
+Errors: 0
+Warnings: 1
+Informational: 0
+
+14. DATASET STATISTICS SUMMARY
+----------------------------------------
+Records: 4
+Columns: 27
+Valid coordinates: 4
+Missing latitude: 0
+Missing longitude: 0
+NDVI valid: 4
+NDVI missing: 0
+Elevation valid: 4
+Elevation missing: 0
+Slope valid: 4
+Slope missing: 0
+Aspect valid: 4
+Aspect missing: 0
+Rainfall NOT_SPATIALLY_MAPPABLE: 4
+
+15. IMPORTANT NOTES
+----------------------------------------
+1. This validation report assesses the fitness of the Phase 5 dataset for
+   progression to final ML dataset preparation.
+2. All environmental values marked as SYNTHETIC_DEMO are derived from
+   synthetic/demo data and must not be used as real observations.
+3. Rainfall data is non-spatial (tabular only) and marked as NOT_SPATIALLY_MAPPABLE.
+4. Missing values are preserved as NaN with appropriate status codes.
+5. No missing values were imputed or replaced with artificial values.
+6. Original data files remain unchanged (read-only access only).
+
+================================================================================
+END OF REPORT
+================================================================================

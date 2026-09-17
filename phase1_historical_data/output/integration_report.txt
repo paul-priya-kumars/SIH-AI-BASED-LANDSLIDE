@@ -1,0 +1,202 @@
+======================================================================
+M2 PHASE 4 — DATA INTEGRATION REPORT
+======================================================================
+Generated at: 2026-09-16 11:35:37
+
+M2-A STATUS:
+  M2A_create_demo_ndvi_py:
+    Type: other
+    CRS: unknown
+    Status: unknown
+  M2A_ndvi_demo_tif:
+    Type: raster
+    CRS: EPSG:4326
+    Bounding box: [85.3, 27.685, 85.315, 27.7]
+    Status: unknown
+  M2A_ndvi_metadata_json:
+    Type: json
+    CRS: unknown
+    Status: SYNTHETIC_DEMO_DATA
+  M2A_README_md:
+    Type: other
+    CRS: unknown
+    Status: unknown
+
+M2-B STATUS:
+  M2B_aspect_demo_tif:
+    Type: raster
+    CRS: EPSG:4326
+    Bounding box: [85.3, 27.685, 85.315, 27.7]
+    Status: unknown
+  M2B_create_demo_data_py:
+    Type: other
+    CRS: unknown
+    Status: unknown
+  M2B_dem_demo_tif:
+    Type: raster
+    CRS: EPSG:4326
+    Bounding box: [85.3, 27.685, 85.315, 27.7]
+    Status: unknown
+  M2B_m2b_metadata_json:
+    Type: json
+    CRS: unknown
+    Status: SYNTHETIC_DEMO_DATA
+  M2B_rainfall_demo_csv:
+    Type: csv
+    CRS: unknown
+    Status: unknown
+  M2B_README_md:
+    Type: other
+    CRS: unknown
+    Status: unknown
+  M2B_slope_demo_tif:
+    Type: raster
+    CRS: EPSG:4326
+    Bounding box: [85.3, 27.685, 85.315, 27.7]
+    Status: unknown
+
+M2-C STATUS:
+  M2C_HISTORICAL_LANDSLIDES_GEOJSON:
+    Type: vector
+    CRS: EPSG:4326
+    Rows: 4
+    Bounding box: [np.float64(78.0322), np.float64(22.5726), np.float64(88.3639), np.float64(30.3165)]
+    Status: unknown
+
+DATASET INVENTORY:
+  M2A_create_demo_ndvi_py (M2-A): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\create_demo_ndvi.py
+    Format: other
+    Original CRS: unknown
+    Integration CRS: None
+    Status: unknown
+  M2A_ndvi_demo_tif (M2-A): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\ndvi_demo.tif
+    Format: raster
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Status: unknown
+  M2A_ndvi_metadata_json (M2-A): Normalized Difference Vegetation Index (NDVI) - Synthetic Demo Data
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\ndvi_metadata.json
+    Format: json
+    Original CRS: unknown
+    Integration CRS: None
+    Status: SYNTHETIC_DEMO_DATA
+  M2A_README_md (M2-A): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\README.md
+    Format: other
+    Original CRS: unknown
+    Integration CRS: None
+    Status: unknown
+  M2B_aspect_demo_tif (M2-B): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\aspect_demo.tif
+    Format: raster
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Status: unknown
+  M2B_create_demo_data_py (M2-B): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\create_demo_data.py
+    Format: other
+    Original CRS: unknown
+    Integration CRS: None
+    Status: unknown
+  M2B_dem_demo_tif (M2-B): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\dem_demo.tif
+    Format: raster
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Status: unknown
+  M2B_m2b_metadata_json (M2-B): Synthetic rainfall, DEM, slope, and aspect data for testing integration
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\m2b_metadata.json
+    Format: json
+    Original CRS: unknown
+    Integration CRS: None
+    Status: SYNTHETIC_DEMO_DATA
+  M2B_rainfall_demo_csv (M2-B): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\rainfall_demo.csv
+    Format: csv
+    Original CRS: unknown
+    Integration CRS: None
+    Status: unknown
+  M2B_README_md (M2-B): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\README.md
+    Format: other
+    Original CRS: unknown
+    Integration CRS: None
+    Status: unknown
+  M2B_slope_demo_tif (M2-B): unknown
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\slope_demo.tif
+    Format: raster
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Status: unknown
+  M2C_HISTORICAL_LANDSLIDES_GEOJSON (M2-C): Historical landslide locations
+    Path: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\gis\historical_landslides.geojson
+    Format: vector
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Status: unknown
+
+CRS CHECK:
+  M2A_create_demo_ndvi_py:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2A_ndvi_demo_tif:
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Needs reprojection: False
+  M2A_ndvi_metadata_json:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2A_README_md:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2B_aspect_demo_tif:
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Needs reprojection: False
+  M2B_create_demo_data_py:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2B_dem_demo_tif:
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Needs reprojection: False
+  M2B_m2b_metadata_json:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2B_rainfall_demo_csv:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2B_README_md:
+    Original CRS: None
+    Integration CRS: None
+    Needs reprojection: False
+  M2B_slope_demo_tif:
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Needs reprojection: False
+  M2C_HISTORICAL_LANDSLIDES_GEOJSON:
+    Original CRS: EPSG:4326
+    Integration CRS: EPSG:4326
+    Needs reprojection: False
+
+SPATIAL EXTENT CHECK:
+  Spatial overlap: YES
+  Intersection bounding box: [85.3, 27.685, 85.315, 27.7]
+  Intersection area: 0.00 square units
+
+INTEGRATION STATUS:
+  Status: READY
+
+======================================================================
+NOTE: This report summarizes the inspection of M2-A, M2-B, and M2-C datasets.
+It does not perform any data modification or spatial joins.
+The original data remains unchanged.
+======================================================================

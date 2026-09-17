@@ -1,0 +1,104 @@
+{
+  "ml_features": {
+    "landslide_id": {
+      "description": "Unique identifier for each landslide record",
+      "data_type": "string",
+      "purpose": "Traceability to original historical record",
+      "source_column": "landslide_id",
+      "source_phase": "Phase 3",
+      "notes": "Preserved for linking features back to historical data"
+    },
+    "latitude": {
+      "description": "Latitude coordinate in decimal degrees",
+      "data_type": "float",
+      "purpose": "Spatial coordinate (Y)",
+      "source_column": "latitude",
+      "source_phase": "Phase 3",
+      "units": "decimal degrees",
+      "valid_range": [
+        -90.0,
+        90.0
+      ],
+      "notes": "Coordinate order: longitude=X, latitude=Y"
+    },
+    "longitude": {
+      "description": "Longitude coordinate in decimal degrees",
+      "data_type": "float",
+      "purpose": "Spatial coordinate (X)",
+      "source_column": "longitude",
+      "source_phase": "Phase 3",
+      "units": "decimal degrees",
+      "valid_range": [
+        -180.0,
+        180.0
+      ],
+      "notes": "Coordinate order: longitude=X, latitude=Y"
+    },
+    "ndvi": {
+      "description": "Normalized Difference Vegetation Index",
+      "data_type": "float",
+      "purpose": "Vegetation health indicator from satellite imagery",
+      "source_column": "ndvi",
+      "source_phase": "Phase 5 (M2-A)",
+      "source_file": "ndvi_demo_phase5_1.tif",
+      "valid_range": [
+        -1.0,
+        1.0
+      ],
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "elevation_m": {
+      "description": "Elevation above sea level",
+      "data_type": "float",
+      "purpose": "Terrain height from digital elevation model",
+      "source_column": "elevation_m",
+      "source_phase": "Phase 5 (M2-B)",
+      "source_file": "dem_demo_phase5_1.tif",
+      "units": "meters",
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "slope_deg": {
+      "description": "Slope angle",
+      "data_type": "float",
+      "purpose": "Terrain steepness derived from elevation",
+      "source_column": "slope_deg",
+      "source_phase": "Phase 5 (M2-B)",
+      "source_file": "slope_demo_phase5_1.tif",
+      "units": "degrees",
+      "valid_range": [
+        0.0,
+        90.0
+      ],
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "aspect_deg": {
+      "description": "Aspect angle",
+      "data_type": "float",
+      "purpose": "Terrain orientation (direction slope faces)",
+      "source_column": "aspect_deg",
+      "source_phase": "Phase 5 (M2-B)",
+      "source_file": "aspect_demo_phase5_1.tif",
+      "units": "degrees",
+      "valid_range": [
+        0.0,
+        360.0
+      ],
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "data_source_type": {
+      "description": "Indicator of data authenticity",
+      "data_type": "string",
+      "purpose": "Distinguishes synthetic/demo data from real observations",
+      "source_column": "data_source_type",
+      "source_phase": "Phase 5",
+      "expected_values": [
+        "SYNTHETIC_DEMO"
+      ],
+      "notes": "CRITICAL: All environmental values in this dataset are synthetic demo values"
+    }
+  },
+  "ml_metadata": {
+    "description": "Historical and contextual metadata preserved for traceability",
+    "note": "See ml_metadata.csv for full schema"
+  }
+}

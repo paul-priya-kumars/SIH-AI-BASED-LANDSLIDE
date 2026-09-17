@@ -1,0 +1,31 @@
+============================================================
+HISTORICAL LANDSLIDE DATA CLEANING REPORT
+============================================================
+Input file: phase1_historical_data/data/sample/sample_landslides.csv
+Output file: phase1_historical_data\data\cleaned\cleaned_sample_landslides.csv
+Timestamp: 2026-09-16 10:52:37
+
+SUMMARY STATISTICS:
+  Total records processed: 5
+  Records successfully cleaned: 4
+  Records requiring review: 1
+
+DUPLICATES:
+  Exact duplicate rows: 0
+  Duplicate landslide IDs: 0
+  Possible spatial duplicates (same date, lat, lon): 0
+
+DATA QUALITY ISSUES:
+  Missing required values: 1
+  Invalid coordinates: 0
+  Invalid dates: 0
+
+CLEANING ACTIONS PERFORMED:
+  Dates standardized: 5
+  Coordinates converted (to numeric): 0
+  Text fields normalized (whitespace): 0
+
+============================================================
+NOTE: The original raw data remains unchanged.
+Review the output file and consider manual review for records marked REVIEW_REQUIRED.
+============================================================

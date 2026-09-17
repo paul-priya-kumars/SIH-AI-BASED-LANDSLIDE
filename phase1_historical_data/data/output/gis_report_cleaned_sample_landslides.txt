@@ -1,0 +1,36 @@
+============================================================
+HISTORICAL LANDSLIDE GIS CONVERSION REPORT
+============================================================
+Input file: phase1_historical_data/data/cleaned/cleaned_sample_landslides.csv
+Output GeoJSON: phase1_historical_data\data\gis\historical_landslides.geojson
+Timestamp: 2026-09-16 11:17:11
+
+COORDINATE REFERENCE SYSTEM:
+  EPSG:4326 (WGS 84 geographic coordinates)
+
+SUMMARY STATISTICS:
+  Total input records: 5
+  Records with valid coordinates: 4
+  Records converted to GIS points: 4
+  Records excluded: 1
+  Records marked REVIEW_REQUIRED (among valid): 0
+
+EXCLUSION BREAKDOWN:
+  Missing latitude: 1
+  Missing longitude: 0
+  Invalid latitude: 0
+  Invalid longitude: 0
+
+PRESERVATION CHECKS:
+  Source fields preserved: True
+  Duplicate IDs preserved: True
+
+OUTPUT DETAILS:
+  GeoJSON file: phase1_historical_data\data\gis\historical_landslides.geojson
+  Size: 2106 bytes
+
+============================================================
+NOTE: The original cleaned CSV remains unchanged.
+Only records with valid latitude and longitude are converted to point features.
+Review the GeoJSON in QGIS or any GIS software.
+============================================================

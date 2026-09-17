@@ -1,0 +1,32 @@
+{
+  "dataset_id": "M2A_NDVI_DEMO_PHASE5_1",
+  "module": "M2-A",
+  "purpose": "Normalized Difference Vegetation Index (NDVI) - Synthetic Demo Data for Phase 5.1",
+  "description": "A 50x50 pixel NDVI GeoTIFF covering the extent of historical landslide demo points. Values are synthetic gradients for testing extraction. NOT REAL DATA.",
+  "source": "Synthetic data generated for testing",
+  "date_generated": "2026-09-16",
+  "crs": "EPSG:4326",
+  "integration_crs": "EPSG:4326",
+  "raster_info": {
+    "width": 50,
+    "height": 50,
+    "pixel_size_x": 0.24663399999999996,
+    "pixel_size_y": 0.24663399999999996,
+    "bands": 1,
+    "nodata": -9999.0,
+    "data_type": "float32",
+    "value_range": {
+      "min": -0.5,
+      "max": 0.9900000095367432,
+      "mean": 0.1768999993801117
+    }
+  },
+  "spatial_extent": {
+    "min_longitude": 77.0322,
+    "max_longitude": 89.3639,
+    "min_latitude": 21.5726,
+    "max_latitude": 31.3165
+  },
+  "status": "SYNTHETIC_DEMO_DATA",
+  "warning": "THIS IS SYNTHETIC DEMO DATA AND MUST NOT BE USED AS REAL OBSERVATIONS."
+}

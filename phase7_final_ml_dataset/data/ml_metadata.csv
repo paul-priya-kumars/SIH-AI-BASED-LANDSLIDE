@@ -1,0 +1,5 @@
+landslide_id,date,location,district,state,country,source,source_url,severity,description,data_quality_status,ndvi_status,rainfall_24h,rainfall_3d,rainfall_7d,rainfall_status,elevation_status,slope_status,aspect_status,feature_extraction_status
+DEMO-LS-001,2020-05-15,Kathmandu Valley,Kathmandu,Bagmati,Nepal,Demo Source,https://example.com/demo1,Low,A synthetic landslide record for demonstration purposes only.,CLEAN,EXTRACTED,,,,NOT_SPATIALLY_MAPPABLE,EXTRACTED,EXTRACTED,EXTRACTED,COMPLETE
+DEMO-LS-002,2019-07-22,Pokhara,Kaski,Gandaki,Nepal,Demo Source,https://example.com/demo2,Medium,Another synthetic record. Not real historical data.,CLEAN,EXTRACTED,,,,NOT_SPATIALLY_MAPPABLE,EXTRACTED,EXTRACTED,EXTRACTED,COMPLETE
+DEMO-LS-003,2021-08-10,Uttarkashi,Uttarkashi,Uttarakhand,India,Demo Source,https://example.com/demo3,High,Third synthetic record. Do not use for training.,CLEAN,EXTRACTED,,,,NOT_SPATIALLY_MAPPABLE,EXTRACTED,EXTRACTED,EXTRACTED,COMPLETE
+DEMO-LS-004,2018-09-01,Kolkata,Kolkata,West Bengal,India,Demo Source,https://example.com/demo4,,A record with missing severity.,CLEAN,EXTRACTED,,,,NOT_SPATIALLY_MAPPABLE,EXTRACTED,EXTRACTED,EXTRACTED,COMPLETE

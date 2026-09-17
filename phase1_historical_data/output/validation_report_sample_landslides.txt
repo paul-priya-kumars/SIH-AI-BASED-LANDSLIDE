@@ -1,0 +1,28 @@
+============================================================
+LANDSLIDE DATA VALIDATION REPORT
+============================================================
+Input file: phase1_historical_data/data/sample/sample_landslides.csv
+Timestamp: 2026-09-16 11:30:51
+
+SUMMARY STATISTICS:
+  Total records processed: 5
+  Valid records (no errors/warnings): 4
+  Records with errors: 1
+  Records with warnings: 1
+
+DATA QUALITY ISSUES:
+  Duplicate landslide IDs: 0
+  Missing coordinates (latitude or longitude): 1
+  Invalid coordinates: 0
+  Invalid dates: 0
+
+MISSING REQUIRED FIELDS:
+  latitude: 1 missing
+
+WARNING DETAILS (first 10):
+  Record 5: Missing latitude
+
+============================================================
+NOTE: This validation does not modify the original data.
+Please address issues in your source data file.
+============================================================

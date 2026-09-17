@@ -1,0 +1,89 @@
+======================================================================
+M2-C PHASE 5 — SPATIAL FEATURE EXTRACTION REPORT
+======================================================================
+Generated at: 2026-09-16 13:41:10
+
+INPUT:
+  Historical landslide GeoJSON: historical_landslides.geojson
+  Record count: 4
+  CRS: EPSG:4326
+  Geometry type: Point
+
+M2-A:
+  NDVI dataset: ndvi_demo_phase5_1.tif
+  Purpose: Normalized Difference Vegetation Index (NDVI) - Synthetic Demo Data for Phase 5.1
+  Status: SYNTHETIC_DEMO_DATA
+  CRS: EPSG:4326
+  Raster size: 50 x 50 pixels
+  Pixel size: 0.24663399999999996 x 0.24663399999999996 degrees
+  Data type: float32
+  NoData value: -9999.0
+  Spatial extent: [77.0322, 21.5726, 89.3639, 31.3165]
+
+M2-B:
+  DEM dataset: dem_demo_phase5_1.tif
+  Slope dataset: slope_demo_phase5_1.tif
+  Aspect dataset: aspect_demo_phase5_1.tif
+  Rainfall dataset: rainfall_demo.csv
+  Rainfall rows: 5
+  Rainfall columns: ['location_id', 'date', 'rainfall_24h', 'rainfall_3d', 'rainfall_7d']
+  Purpose: Synthetic rainfall, DEM, slope, and aspect data for testing integration (Phase 5.1)
+  Status: SYNTHETIC_DEMO_DATA
+  CRS: EPSG:4326
+  Raster size: 50 x 50 pixels
+  Pixel size: 0.24663399999999996 x 0.24663399999999996 degrees
+  Data type: float32
+  NoData value: -9999.0
+  Rainfall rows: 5
+  Rainfall columns: ['location_id', 'date', 'rainfall_24h', 'rainfall_3d', 'rainfall_7d']
+  Rainfall date range: 2020-05-15 to 2020-05-15
+
+CRS INFORMATION:
+  Historical landslide layer: EPSG:4326
+  NDVI raster: EPSG:4326
+  DEM raster: EPSG:4326
+
+EXTRACTION SUMMARY:
+  Total historical landslide records: 4
+  NDVI extracted: 4
+  NDVI nodata: 0
+  NDVI outside raster: 0
+  NDVI errors: 0
+  Rainfall (non-spatial): 4 records marked as NOT_SPATIALLY_MAPPABLE
+  Rainfall errors: 0
+  Elevation extracted: 4
+  Elevation nodata: 0
+  Elevation outside raster: 0
+  Elevation errors: 0
+  Slope extracted: 4
+  Slope nodata: 0
+  Slope outside raster: 0
+  Slope errors: 0
+  Aspect extracted: 4
+  Aspect nodata: 0
+  Aspect outside raster: 0
+  Aspect errors: 0
+
+FEATURE EXTRACTION STATUS:
+  COMPLETE: 4
+
+DATA SOURCE TYPE:
+  SYNTHETIC_DEMO: 4
+
+OUTPUT:
+  Feature extraction CSV: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\features\phase5\historical_landslide_features.csv
+  Feature extraction GeoJSON: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\features\phase5\historical_landslide_features.geojson
+  Report file: C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\output\feature_extraction_report.txt
+
+======================================================================
+IMPORTANT NOTES:
+  1. This dataset is an intermediate feature-extraction dataset.
+     It is NOT the final ML dataset.
+  2. All environmental values marked as SYNTHETIC_DEMO are derived from
+     synthetic/demo data and must not be used as real observations.
+  3. Rainfall data is non-spatial (tabular only) and could not be
+     spatially extracted; marked as NOT_SPATIALLY_MAPPABLE.
+  4. Missing values are preserved as NaN with appropriate status codes.
+  5. No missing values were imputed or replaced with artificial values.
+  6. Original data files remain unchanged (read-only access only).
+======================================================================

@@ -1,0 +1,153 @@
+{
+  "source": "M2-C Phase 7 Final ML Dataset Preparation",
+  "dataset": "ml_features.csv",
+  "source_path": "phase1_historical_data/phase7_final_ml_dataset/data/ml_features.csv",
+  "source_schema": {
+    "landslide_id": {
+      "data_type": "string",
+      "description": "Unique identifier for each landslide record",
+      "purpose": "Traceability to original historical record",
+      "source_phase": "Phase 3",
+      "synthetic": false
+    },
+    "latitude": {
+      "data_type": "float",
+      "description": "Latitude coordinate in decimal degrees",
+      "purpose": "Spatial coordinate (Y)",
+      "source_phase": "Phase 3",
+      "units": "decimal degrees",
+      "valid_range": [-90.0, 90.0],
+      "synthetic": false,
+      "notes": "Coordinate order: longitude=X, latitude=Y"
+    },
+    "longitude": {
+      "data_type": "float",
+      "description": "Longitude coordinate in decimal degrees",
+      "purpose": "Spatial coordinate (X)",
+      "source_phase": "Phase 3",
+      "units": "decimal degrees",
+      "valid_range": [-180.0, 180.0],
+      "synthetic": false,
+      "notes": "Coordinate order: longitude=X, latitude=Y"
+    },
+    "ndvi": {
+      "data_type": "float",
+      "description": "Normalized Difference Vegetation Index",
+      "purpose": "Vegetation health indicator from satellite imagery",
+      "source_phase": "Phase 5 (M2-A)",
+      "valid_range": [-1.0, 1.0],
+      "synthetic": true,
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "elevation_m": {
+      "data_type": "float",
+      "description": "Elevation above sea level",
+      "purpose": "Terrain height from digital elevation model",
+      "source_phase": "Phase 5 (M2-B)",
+      "units": "meters",
+      "synthetic": true,
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "slope_deg": {
+      "data_type": "float",
+      "description": "Slope angle",
+      "purpose": "Terrain steepness derived from elevation",
+      "source_phase": "Phase 5 (M2-B)",
+      "units": "degrees",
+      "valid_range": [0.0, 90.0],
+      "synthetic": true,
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "aspect_deg": {
+      "data_type": "float",
+      "description": "Aspect angle",
+      "purpose": "Terrain orientation (direction slope faces)",
+      "source_phase": "Phase 5 (M2-B)",
+      "units": "degrees",
+      "valid_range": [0.0, 360.0],
+      "synthetic": true,
+      "notes": "Synthetic demo data - not real measurements"
+    },
+    "data_source_type": {
+      "data_type": "string",
+      "description": "Indicator of data authenticity",
+      "purpose": "Distinguishes synthetic/demo data from real observations",
+      "source_phase": "Phase 5",
+      "expected_values": ["SYNTHETIC_DEMO"],
+      "synthetic": false,
+      "notes": "CRITICAL: All environmental values in this dataset are synthetic demo values"
+    }
+  },
+  "destination": "M1 ML Pipeline",
+  "destination_expected_schema": {
+    "note": "M1 implementation not available for direct inspection. M1 should expect the source schema as defined above.",
+    "feature_mapping": "Direct 1:1 mapping recommended - no transformation required if M1 accepts this schema",
+    "coordinate_convention": {
+      "longitude": "X",
+      "latitude": "Y",
+      "datum": "WGS 84",
+      "crs": "EPSG:4326"
+    }
+  },
+  "feature_order": [
+    "landslide_id",
+    "latitude",
+    "longitude",
+    "ndvi",
+    "elevation_m",
+    "slope_deg",
+    "aspect_deg",
+    "data_source_type"
+  ],
+  "coordinate_contract": {
+    "longitude_is_x": true,
+    "latitude_is_y": true,
+    "coordinate_order": "longitude=X, latitude=Y",
+    "crs": "EPSG:4326 (WGS 84)",
+    "units": "decimal degrees"
+  },
+  "rainfall": {
+    "status": "NOT_SPATIALLY_MAPPABLE",
+    "handling": "Excluded from ML feature dataset (preserved in metadata dataset for reference)",
+    "reason": "Current rainfall demo data lacks spatial coordinates",
+    "note": "M1 must obtain rainfall from an appropriate spatial rainfall source or another properly validated pipeline"
+  },
+  "target": {
+    "available": false,
+    "explanation": "No trustworthy supervised learning target available in synthetic/demo dataset",
+    "target_labels_fabricated": false,
+    "note": "Severity field preserved in metadata but not used as ML target"
+  },
+  "synthetic_data": {
+    "status": "SYNTHETIC_DEMO",
+    "explanation": "All environmental feature values (NDVI, elevation, slope, aspect) are synthetic demo values created for pipeline development and testing only. They are NOT real-world measurements and MUST NOT be used as evidence of real-world model performance.",
+    "preserved_in": "data_source_type column"
+  },
+  "provenance_requirements": {
+    "landslide_id_preserved": true,
+    "source_metadata_preserved": true,
+    "source_urls_preserved": true,
+    "synthetic_marker_preserved": true,
+    "coordinates_preserved": true,
+    "historical_attributes_preserved_in_metadata": true
+  },
+  "validation_rules": {
+    "no_modification_of_source_data": true,
+    "read_only_access_required": true,
+    "deterministic_processing": true,
+    "no_target_fabrication": true,
+    "no_rainfall_fabrication": true,
+    "no_predictions_generated": true,
+    "no_risk_scores_generated": true,
+    "no_confidence_scores_generated": true,
+    "no_train_test_split_created": true,
+    "no_feature_scaling_for_training": true,
+    "no_model_training_performed": true
+  },
+  "version_information": {
+    "m2c_phase": "Phase 7 Final ML Dataset Preparation",
+    "document_version": "1.0",
+    "created_date": "2026-09-16",
+    "notes": "This contract documents the M2-C → M1 handoff interface. M1 should validate this contract before consuming the dataset."
+  }
+}

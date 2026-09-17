@@ -1,0 +1,41 @@
+{
+  "dataset_id": "M2B_DEMO_DATA_PHASE5_1",
+  "module": "M2-B",
+  "purpose": "Synthetic rainfall, DEM, slope, and aspect data for testing integration (Phase 5.1)",
+  "description": "Demo data including a 50x50 DEM GeoTIFF, derived slope and aspect, and a CSV with synthetic rainfall measurements. All raster data covers the extent of historical landslide demo points. NOT REAL DATA.",
+  "source": "Synthetic data generated for testing",
+  "date_generated": "2026-09-16",
+  "crs": "EPSG:4326",
+  "integration_crs": "EPSG:4326",
+  "raster_info": {
+    "width": 50,
+    "height": 50,
+    "pixel_size_x": 0.24663399999999996,
+    "pixel_size_y": 0.24663399999999996,
+    "bands": 1,
+    "nodata": -9999.0,
+    "data_type": "float32",
+    "extent": {
+      "min_longitude": 77.0322,
+      "max_longitude": 89.3639,
+      "min_latitude": 21.5726,
+      "max_latitude": 31.3165
+    }
+  },
+  "rainfall_csv_info": {
+    "rows": 5,
+    "columns": [
+      "location_id",
+      "date",
+      "rainfall_24h",
+      "rainfall_3d",
+      "rainfall_7d"
+    ],
+    "date_range": {
+      "min": "2020-05-15",
+      "max": "2020-05-15"
+    }
+  },
+  "status": "SYNTHETIC_DEMO_DATA",
+  "warning": "THIS IS SYNTHETIC DEMO DATA AND MUST NOT BE USED AS REAL OBSERVATIONS."
+}

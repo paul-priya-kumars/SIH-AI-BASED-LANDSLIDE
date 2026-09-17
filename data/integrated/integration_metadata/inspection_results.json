@@ -1,0 +1,185 @@
+{
+  "M2-A": {
+    "create_demo_ndvi.py": {
+      "type": "other",
+      "size": 838
+    },
+    "ndvi_demo.tif": {
+      "type": "raster",
+      "crs": "EPSG:4326",
+      "bbox": [
+        85.3,
+        27.685,
+        85.315,
+        27.7
+      ],
+      "width": 3,
+      "height": 3,
+      "count": 1,
+      "dtypes": [
+        "float32"
+      ],
+      "nodata": -9999.0,
+      "sample_min": -0.10000000149011612,
+      "sample_max": 0.5,
+      "sample_mean": 0.2111111283302307
+    },
+    "ndvi_metadata.json": {
+      "type": "json",
+      "keys": [
+        "dataset_id",
+        "module",
+        "purpose",
+        "description",
+        "source",
+        "date_generated",
+        "crs",
+        "integration_crs",
+        "raster_info",
+        "spatial_extent",
+        "status",
+        "warning"
+      ],
+      "length": null
+    },
+    "README.md": {
+      "type": "other",
+      "size": 474
+    }
+  },
+  "M2-B": {
+    "aspect_demo.tif": {
+      "type": "raster",
+      "crs": "EPSG:4326",
+      "bbox": [
+        85.3,
+        27.685,
+        85.315,
+        27.7
+      ],
+      "width": 3,
+      "height": 3,
+      "count": 1,
+      "dtypes": [
+        "float32"
+      ],
+      "nodata": -9999.0,
+      "sample_min": 228.478515625,
+      "sample_max": 228.478515625,
+      "sample_mean": 228.478515625
+    },
+    "create_demo_data.py": {
+      "type": "other",
+      "size": 4472
+    },
+    "dem_demo.tif": {
+      "type": "raster",
+      "crs": "EPSG:4326",
+      "bbox": [
+        85.3,
+        27.685,
+        85.315,
+        27.7
+      ],
+      "width": 3,
+      "height": 3,
+      "count": 1,
+      "dtypes": [
+        "float32"
+      ],
+      "nodata": -9999.0,
+      "sample_min": 1280.0,
+      "sample_max": 1320.0,
+      "sample_mean": 1300.0
+    },
+    "m2b_metadata.json": {
+      "type": "json",
+      "keys": [
+        "dataset_id",
+        "module",
+        "purpose",
+        "description",
+        "source",
+        "date_generated",
+        "crs",
+        "integration_crs",
+        "raster_info",
+        "rainfall_csv_info",
+        "status",
+        "warning"
+      ],
+      "length": null
+    },
+    "rainfall_demo.csv": {
+      "type": "csv",
+      "rows": 5,
+      "columns": [
+        "location_id",
+        "date",
+        "rainfall_24h",
+        "rainfall_3d",
+        "rainfall_7d"
+      ],
+      "dtypes": {
+        "location_id": "str",
+        "date": "str",
+        "rainfall_24h": "float64",
+        "rainfall_3d": "float64",
+        "rainfall_7d": "float64"
+      }
+    },
+    "README.md": {
+      "type": "other",
+      "size": 610
+    },
+    "slope_demo.tif": {
+      "type": "raster",
+      "crs": "EPSG:4326",
+      "bbox": [
+        85.3,
+        27.685,
+        85.315,
+        27.7
+      ],
+      "width": 3,
+      "height": 3,
+      "count": 1,
+      "dtypes": [
+        "float32"
+      ],
+      "nodata": -9999.0,
+      "sample_min": 1.5569484233856201,
+      "sample_max": 1.5569484233856201,
+      "sample_mean": 1.5569484233856201
+    }
+  },
+  "M2-C": {
+    "historical_landslides_geojson": {
+      "type": "vector",
+      "crs": "EPSG:4326",
+      "rows": 4,
+      "geometry_type": "Point",
+      "columns": [
+        "landslide_id",
+        "date",
+        "latitude",
+        "longitude",
+        "location",
+        "district",
+        "state",
+        "country",
+        "source",
+        "source_url",
+        "severity",
+        "description",
+        "data_quality_status"
+      ],
+      "bbox": [
+        78.0322,
+        22.5726,
+        88.3639,
+        30.3165
+      ]
+    }
+  }
+}

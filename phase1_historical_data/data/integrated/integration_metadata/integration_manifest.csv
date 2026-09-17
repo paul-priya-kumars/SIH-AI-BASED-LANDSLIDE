@@ -1,0 +1,13 @@
+dataset_id,module,dataset_name,file_path,file_format,crs,integration_crs,spatial,record_count,min_x,max_x,min_y,max_y,status,notes
+M2A_create_demo_ndvi_py,M2-A,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\create_demo_ndvi.py,other,unknown,,no,N/A,,,,,unknown,
+M2A_ndvi_demo_tif,M2-A,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\ndvi_demo.tif,raster,EPSG:4326,EPSG:4326,yes,1,85.3,85.315,27.685,27.7,unknown,
+M2A_ndvi_metadata_json,M2-A,Normalized Difference Vegetation Index (NDVI) - Synthetic Demo Data,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\ndvi_metadata.json,json,unknown,,no,N/A,,,,,SYNTHETIC_DEMO_DATA,
+M2A_README_md,M2-A,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2a\README.md,other,unknown,,no,N/A,,,,,unknown,
+M2B_aspect_demo_tif,M2-B,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\aspect_demo.tif,raster,EPSG:4326,EPSG:4326,yes,1,85.3,85.315,27.685,27.7,unknown,
+M2B_create_demo_data_py,M2-B,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\create_demo_data.py,other,unknown,,no,N/A,,,,,unknown,
+M2B_dem_demo_tif,M2-B,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\dem_demo.tif,raster,EPSG:4326,EPSG:4326,yes,1,85.3,85.315,27.685,27.7,unknown,
+M2B_m2b_metadata_json,M2-B,"Synthetic rainfall, DEM, slope, and aspect data for testing integration",C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\m2b_metadata.json,json,unknown,,no,N/A,,,,,SYNTHETIC_DEMO_DATA,
+M2B_rainfall_demo_csv,M2-B,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\rainfall_demo.csv,csv,unknown,,no,5,,,,,unknown,
+M2B_README_md,M2-B,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\README.md,other,unknown,,no,N/A,,,,,unknown,
+M2B_slope_demo_tif,M2-B,unknown,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\integrated\m2b\slope_demo.tif,raster,EPSG:4326,EPSG:4326,yes,1,85.3,85.315,27.685,27.7,unknown,
+M2C_HISTORICAL_LANDSLIDES_GEOJSON,M2-C,Historical landslide locations,C:\Users\User\Desktop\M2C\M2-C\phase1_historical_data\data\gis\historical_landslides.geojson,vector,EPSG:4326,EPSG:4326,yes,4,78.0322,88.3639,22.5726,30.3165,unknown,

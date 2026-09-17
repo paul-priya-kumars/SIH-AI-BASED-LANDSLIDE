@@ -1,0 +1,125 @@
+{
+  "generated_at": "2026-09-16T11:35:37.909865",
+  "datasets": [
+    {
+      "dataset_id": "M2A_create_demo_ndvi_py",
+      "module": "M2-A",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2a\\create_demo_ndvi.py",
+      "format": "other",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2A_ndvi_demo_tif",
+      "module": "M2-A",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2a\\ndvi_demo.tif",
+      "format": "raster",
+      "original_crs": "EPSG:4326",
+      "integration_crs": "EPSG:4326",
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2A_ndvi_metadata_json",
+      "module": "M2-A",
+      "purpose": "Normalized Difference Vegetation Index (NDVI) - Synthetic Demo Data",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2a\\ndvi_metadata.json",
+      "format": "json",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "SYNTHETIC_DEMO_DATA"
+    },
+    {
+      "dataset_id": "M2A_README_md",
+      "module": "M2-A",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2a\\README.md",
+      "format": "other",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2B_aspect_demo_tif",
+      "module": "M2-B",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\aspect_demo.tif",
+      "format": "raster",
+      "original_crs": "EPSG:4326",
+      "integration_crs": "EPSG:4326",
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2B_create_demo_data_py",
+      "module": "M2-B",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\create_demo_data.py",
+      "format": "other",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2B_dem_demo_tif",
+      "module": "M2-B",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\dem_demo.tif",
+      "format": "raster",
+      "original_crs": "EPSG:4326",
+      "integration_crs": "EPSG:4326",
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2B_m2b_metadata_json",
+      "module": "M2-B",
+      "purpose": "Synthetic rainfall, DEM, slope, and aspect data for testing integration",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\m2b_metadata.json",
+      "format": "json",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "SYNTHETIC_DEMO_DATA"
+    },
+    {
+      "dataset_id": "M2B_rainfall_demo_csv",
+      "module": "M2-B",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\rainfall_demo.csv",
+      "format": "csv",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2B_README_md",
+      "module": "M2-B",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\README.md",
+      "format": "other",
+      "original_crs": "unknown",
+      "integration_crs": null,
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2B_slope_demo_tif",
+      "module": "M2-B",
+      "purpose": "unknown",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\integrated\\m2b\\slope_demo.tif",
+      "format": "raster",
+      "original_crs": "EPSG:4326",
+      "integration_crs": "EPSG:4326",
+      "status": "unknown"
+    },
+    {
+      "dataset_id": "M2C_HISTORICAL_LANDSLIDES_GEOJSON",
+      "module": "M2-C",
+      "purpose": "Historical landslide locations",
+      "path": "C:\\Users\\User\\Desktop\\M2C\\M2-C\\phase1_historical_data\\data\\gis\\historical_landslides.geojson",
+      "format": "vector",
+      "original_crs": "EPSG:4326",
+      "integration_crs": "EPSG:4326",
+      "status": "unknown"
+    }
+  ]
+}
