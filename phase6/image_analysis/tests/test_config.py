@@ -31,10 +31,10 @@ def test_config_initialization():
     try:
         config = ImageAIConfig()
 
-        assert config.model_path == Path("./models/landsat4sense_unet/not_available")
-        assert config.model_version == "not-available-phase1"
-        assert config.image_ai_enabled == False
-        assert config.dataset_path == Path("./datasets/landsat4sense")
+        assert config.get_model_path() == Path("./models/not_available")
+        assert config.get_model_version() == "not-available-phase1"
+        assert config.is_image_ai_enabled() == False
+        assert config.get_dataset_path() == Path("./datasets/landsat4sense")
     finally:
         # Restore environment variables
         for var, value in old_env.items():
@@ -56,10 +56,10 @@ def test_config_from_environment():
     }):
         config = ImageAIConfig()
 
-        assert config.model_path == Path(test_model_path)
-        assert config.model_version == test_model_version
-        assert config.image_ai_enabled == True
-        assert config.dataset_path == Path(test_dataset_path)
+        assert config.get_model_path() == Path(test_model_path)
+        assert config.get_model_version() == test_model_version
+        assert config.is_image_ai_enabled() == True
+        assert config.get_dataset_path() == Path(test_dataset_path)
 
 
 def test_config_boolean_parsing():
@@ -81,8 +81,8 @@ def test_config_boolean_parsing():
     for value, expected in test_cases:
         with patch.dict(os.environ, {"JARVIS_IMAGE_AI_ENABLED": value}):
             config = ImageAIConfig()
-            assert config.image_ai_enabled == expected, \
-                f"Failed for value '{value}': expected {expected}, got {config.image_ai_enabled}"
+            assert config.is_image_ai_enabled() == expected, \
+                f"Failed for value '{value}': expected {expected}, got {config.is_image_ai_enabled()}"
 
 
 def test_get_image_ai_config():

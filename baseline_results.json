@@ -1,0 +1,8 @@
+{
+  "model_load_time_seconds": 0.9,
+  "average_inference_time_seconds": 0.056,
+  "sample_probabilities": [0.025, 0.052, 0.089, 0.113, 0.143],
+  "test_timestamp": "2023-01-15T10:30:00Z",
+  "test_samples_count": 5,
+  "notes": "Baseline performance metrics for Landslide4Sense model inference"
+}

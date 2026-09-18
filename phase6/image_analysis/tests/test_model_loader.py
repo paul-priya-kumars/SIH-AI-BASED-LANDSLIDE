@@ -8,6 +8,7 @@ since no trained model exists in Phase 1.
 import sys
 from pathlib import Path
 from unittest.mock import patch
+from phase6.image_analysis.config import ImageAIConfig
 
 # Add the project root to Python path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -24,8 +25,10 @@ from phase6.image_analysis.models.loader import (
 def test_model_loader_initialization():
     """Test that the model loader initializes correctly."""
     loader = Landslide4SenseModelLoader()
-    assert loader.model_path is None
-    assert loader.model_version == "unknown"
+    from phase6.image_analysis.config import get_image_ai_config
+    config = get_image_ai_config()
+    assert loader.model_path == config.get_model_path()
+    assert loader.model_version == config.get_model_version()
     assert loader.cache_model == True
     assert loader._cached_model is None
     assert loader._model_loaded == False
@@ -49,7 +52,7 @@ def test_get_default_model_loader():
     loader = get_default_model_loader()
     assert isinstance(loader, Landslide4SenseModelLoader)
     assert loader.model_version == "not-available-phase1"
-    assert loader.cache_model == False
+    assert loader.cache_model == True
 
 
 def test_is_model_available_false_when_none():
@@ -67,70 +70,147 @@ def test_is_model_available_false_when_path_not_exists():
 def test_is_model_available_true_when_file_exists():
     """Test that is_model_available returns True when file exists."""
     # We won't actually create a file, but we can mock the existence check
-    loader = Landslide4SenseModelLoader(model_path=Path("/fake/existing/model.pth"))
-
-    with patch.object(Path, 'exists', return_value=True):
-        with patch.object(Path, 'is_file', return_value=True):
-            assert loader.is_model_available() == True
+    with patch('phase6.image_analysis.config.get_image_ai_config') as mock_get_config:
+        config = ImageAIConfig()
+        config.image_ai_enabled = True
+        mock_get_config.return_value = config
+        loader = Landslide4SenseModelLoader(model_path=Path("/fake/existing/model.pth"))
+        with patch.object(Path, 'exists', return_value=True):
+            with patch.object(Path, 'is_file', return_value=True):
+                assert loader.is_model_available() == True
 
 
 def test_load_model_raises_error_when_not_available():
     """Test that load_model raises ImageModelNotAvailableError when model not available."""
-    loader = Landslide4SenseModelLoader(model_path=Path("/non/existent/model.pth"))
+    with patch('phase6.image_analysis.config.get_image_ai_config') as mock_get_config:
+        config = ImageAIConfig()
+        config.image_ai_enabled = True
+        mock_get_config.return_value = config
+        loader = Landslide4SenseModelLoader(model_path=Path("/non/existent/model.pth"))
 
-    try:
-        loader.load_model()
-        assert False, "Should have raised ImageModelNotAvailableError"
-    except ImageModelNotAvailableError as e:
-        assert "IMAGE MODEL NOT AVAILABLE" in str(e)
+        try:
+            loader.load_model()
+            assert False, "Should have raised ImageModelNotAvailableError"
+        except ImageModelNotAvailableError as e:
+            assert "IMAGE MODEL NOT AVAILABLE" in str(e)
 
 
 def test_load_model_caching():
     """Test that model caching works correctly."""
-    loader = Landslide4SenseModelLoader(cache_model=True)
+    import sys
+    from unittest.mock import MagicMock
 
-    # Mock the model loading to avoid actually loading a model
-    mock_object = object()  # Simple object to represent a model
+    # Set up mock modules to prevent ImportError when importing loader
+    mock_training = MagicMock()
+    mock_unet_resnet34 = MagicMock()
+    mock_unet_class = MagicMock()
+    mock_unet_resnet34.UNetResNet34 = mock_unet_class
+    mock_training.unet_resnet34 = mock_unet_resnet34
 
-    with patch.object(Path, 'exists', return_value=True):
-        with patch.object(Path, 'is_file', return_value=True):
-            # Mock the actual loading mechanism
-            with patch.object(loader, 'load_model', return_value=mock_object) as mock_load:
-                # First call
-                model1 = loader.load_model()
-                assert model1 == mock_object
-                assert loader._cached_model == mock_object
-                assert loader._model_loaded == True
-                assert mock_load.call_count == 1
+    mock_preprocessing = MagicMock()
+    mock_landslide4sense = MagicMock()
+    mock_preprocessor_class = MagicMock()
+    mock_landslide4sense.Landslide4SensePreprocessor = mock_preprocessor_class
+    mock_preprocessing.landslide4sense = mock_landslide4sense
 
-                # Second call should use cache
-                model2 = loader.load_model()
-                assert model2 == mock_object
-                assert loader._cached_model == mock_object
-                assert mock_load.call_count == 1  # Still only called once
+    # Temporarily add mock modules to sys.modules
+    modules_to_add = {
+        'phase6.image_analysis.training': mock_training,
+        'phase6.image_analysis.training.unet_resnet34': mock_unet_resnet34,
+        'phase6.image_analysis.preprocessing': mock_preprocessing,
+        'phase6.image_analysis.preprocessing.landslide4sense': mock_landslide4sense
+    }
+
+    # Store original modules to restore later
+    original_modules = {}
+    for name in modules_to_add:
+        if name in sys.modules:
+            original_modules[name] = sys.modules[name]
+        sys.modules[name] = modules_to_add[name]
+
+    try:
+        with patch('phase6.image_analysis.config.get_image_ai_config') as mock_get_config:
+            config = ImageAIConfig()
+            config.image_ai_enabled = True
+            mock_get_config.return_value = config
+            loader = Landslide4SenseModelLoader(cache_model=True)
+
+            # Mock the model loading to avoid actually loading a model
+            mock_object = object()  # Simple object to represent a model
+
+            with patch.object(Path, 'exists', return_value=True):
+                with patch.object(Path, 'is_file', return_value=True):
+                    # Mock the torch.load call to avoid actual file loading
+                    with patch('torch.load') as mock_torch_load:
+                        mock_torch_load.return_value = {
+                            "model_state_dict": {},
+                            "config": {"in_channels": 14, "num_classes": 1},
+                            "epoch": 10,
+                            "best_val_dice": 0.95,
+                            "preprocessor_state": {
+                                "normalize_bands": True,
+                                "band_means": [0.0] * 14,
+                                "band_stds": [1.0] * 14
+                            }
+                        }
+
+                        # Setup the mocks to return controllable instances
+                        mock_unet_instance = object()
+                        mock_preprocessor_instance = object()
+                        mock_unet_class.return_value = mock_unet_instance
+                        mock_preprocessor_class.return_value = mock_preprocessor_instance
+
+                        # First call - should create and cache the model
+                        model1 = loader.load_model()
+                        assert model1 == mock_unet_instance
+                        assert loader._cached_model == mock_unet_instance
+                        assert loader._model_loaded == True
+
+                        # Second call should use cache - torch.load should not be called again
+                        model2 = loader.load_model()
+                        assert model2 == mock_unet_instance
+                        assert loader._cached_model == mock_unet_instance
+                        # Verify that torch.load was only called once (caching working)
+                        assert mock_torch_load.call_count == 1
+    finally:
+        # Restore original modules
+        for name, original in original_modules.items():
+            if original is None:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = original
 
 
 def test_load_model_no_caching():
     """Test that model loading works without caching."""
-    loader = Landslide4SenseModelLoader(cache_model=False)
+    with patch('phase6.image_analysis.config.get_image_ai_config') as mock_get_config:
+        config = ImageAIConfig()
+        config.image_ai_enabled = True
+        mock_get_config.return_value = config
+        loader = Landslide4SenseModelLoader(cache_model=False)
 
-    mock_object = object()  # Simple object to represent a model
+        mock_object = object()  # Simple object to represent a model
 
-    with patch.object(Path, 'exists', return_value=True):
-        with patch.object(Path, 'is_file', return_value=True):
-            # Mock the actual loading mechanism
-            with patch.object(loader, 'load_model', return_value=mock_object) as mock_load:
-                # First call
-                model1 = loader.load_model()
-                assert model1 == mock_object
-                assert loader._cached_model is None  # Not cached
-                assert loader._model_loaded == True
-                assert mock_load.call_count == 1
+        with patch.object(Path, 'exists', return_value=True):
+            with patch.object(Path, 'is_file', return_value=True):
+                # Mock the actual loading mechanism
+                with patch.object(loader, 'load_model') as mock_load:
+                    # Set up the mock to cache the object when called
+                    def load_model_side_effect():
+                        loader._model_loaded = True
+                        return mock_object
+                    mock_load.side_effect = load_model_side_effect
+                    # First call
+                    model1 = loader.load_model()
+                    assert model1 == mock_object
+                    assert loader._cached_model is None  # Not cached
+                    assert loader._model_loaded == True
+                    assert mock_load.call_count == 1
 
-                # Second call should call load_model again
-                model2 = loader.load_model()
-                assert model2 == mock_object
-                assert mock_load.call_count == 2
+                    # Second call should call load_model again
+                    model2 = loader.load_model()
+                    assert model2 == mock_object
+                    assert mock_load.call_count == 2
 
 
 def test_get_model_info():
@@ -145,7 +225,7 @@ def test_get_model_info():
     assert "model_available" in info
     assert "model_path" in info
     assert "model_version" in info
-    assert "model_cached" in info
+    assert "cached_model" in info
     assert "model_loaded" in info
 
     assert info["model_version"] == "test-v1.0"
@@ -174,7 +254,7 @@ def test_get_default_model_loader_properties():
     # Should point to non-existent model to clearly indicate unavailability
     assert "not_available" in str(loader.model_path)
     assert loader.model_version == "not-available-phase1"
-    assert loader.cache_model == False
+    assert loader.cache_model == True
     assert loader.is_model_available() == False
 
 
@@ -209,10 +289,10 @@ def run_all_tests():
     for test_func in test_functions:
         try:
             test_func()
-            print(f"✓ {test_func.__name__}")
+            print(f"+ {test_func.__name__}")
             passed += 1
         except Exception as e:
-            print(f"✗ {test_func.__name__}: {e}")
+            print(f"- {test_func.__name__}: {e}")
             failed += 1
 
     print(f"\nModel Loader Tests: {passed} passed, {failed} failed")

@@ -1,8 +1,7 @@
 """
 Tests for Landslide4Sense preprocessing infrastructure.
 
-Tests only the infrastructure interfaces, not actual preprocessing logic
-since the dataset is not available in Phase 1.
+Tests the actual preprocessing implementation including finite value checking.
 """
 
 import sys
@@ -16,7 +15,7 @@ if str(PROJECT_ROOT) not in sys.path:
 import numpy as np
 from pathlib import Path
 
-from phase6.image_analysis.preprocessing.landsat4sense import (
+from phase6.image_analysis.preprocessing.landslide4sense import (
     Landslide4SensePreprocessor,
     get_default_preprocessor
 )
@@ -59,13 +58,24 @@ def test_validate_dimensions():
 
     # Valid dimensions
     valid_data = np.random.rand(128, 128, 14)
-    assert preprocessor.validate_dimensions(valid_data) == True
+    print(f"Valid data shape: {valid_data.shape}")
+    result = preprocessor.validate_dimensions(valid_data)
+    print(f"Validate dimensions result for valid data: {result}")
+    assert result == True, f"Expected True for valid data, got {result}"
 
     # Invalid dimensions
-    assert preprocessor.validate_dimensions(np.random.rand(64, 64, 14)) == False
-    assert preprocessor.validate_dimensions(np.random.rand(128, 128, 7)) == False
-    assert preprocessor.validate_dimensions(np.random.rand(128, 128)) == False
-    assert preprocessor.validate_dimensions(np.random.rand(128, 128, 14, 1)) == False
+    test_cases = [
+        (np.random.rand(64, 64, 14), "(64, 64, 14)"),
+        (np.random.rand(128, 128, 7), "(128, 128, 7)"),
+        (np.random.rand(128, 128), "(128, 128)"),
+        (np.random.rand(128, 128, 14, 1), "(128, 128, 14, 1)")
+    ]
+
+    for data, desc in test_cases:
+        print(f"Testing invalid dimensions {desc}: shape {data.shape}")
+        result = preprocessor.validate_dimensions(data)
+        print(f"Validate dimensions result for {desc}: {result}")
+        assert result == False, f"Expected False for {desc}, got {result}"
 
 
 def test_validate_band_count():
@@ -128,15 +138,118 @@ def test_fit_normalization():
     assert not np.any(preprocessor.band_stds == 0)
 
 
-def test_preprocess_sample_not_implemented():
-    """Test that preprocess_sample raises NotImplementedError in Phase 1."""
-    preprocessor = Landslide4SensePreprocessor()
+def test_preprocess_sample_with_valid_data():
+    """Test that preprocess_sample works with valid data."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=False)  # Disable normalization for simplicity
 
+    # Create valid sample data
+    sample_data = np.random.rand(128, 128, 14).astype(np.float32)
+
+    # Process the sample
+    processed = preprocessor.preprocess_sample(sample_data)
+
+    # Check output shape and type
+    assert processed.shape == (14, 128, 128)  # Channel-first format
+    assert processed.dtype == np.float32
+
+
+def test_preprocess_sample_with_nan_values():
+    """Test that preprocess_sample raises ValueError for NaN values."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=False)
+
+    # Create sample data with NaN
+    sample_data = np.random.rand(128, 128, 14).astype(np.float32)
+    sample_data[0, 0, 0] = np.nan
+
+    # Process the sample - should raise ValueError
     try:
-        preprocessor.preprocess_sample(Path("/fake/path"))
-        assert False, "Should have raised NotImplementedError"
-    except NotImplementedError as e:
-        assert "not implemented in Phase 1" in str(e)
+        preprocessor.preprocess_sample(sample_data)
+        assert False, "Should have raised ValueError for NaN values"
+    except ValueError as e:
+        assert "non-finite values" in str(e)
+
+
+def test_preprocess_sample_with_inf_values():
+    """Test that preprocess_sample raises ValueError for Inf values."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=False)
+
+    # Create sample data with Inf
+    sample_data = np.random.rand(128, 128, 14).astype(np.float32)
+    sample_data[0, 0, 0] = np.inf
+
+    # Process the sample - should raise ValueError
+    try:
+        preprocessor.preprocess_sample(sample_data)
+        assert False, "Should have raised ValueError for Inf values"
+    except ValueError as e:
+        assert "non-finite values" in str(e)
+
+
+def test_preprocess_sample_invalid_dimensions():
+    """Test that preprocess_sample raises ValueError for invalid dimensions."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=False)
+
+    # Create sample data with invalid dimensions
+    sample_data = np.random.rand(64, 64, 14).astype(np.float32)
+
+    # Process the sample - should raise ValueError
+    try:
+        preprocessor.preprocess_sample(sample_data)
+        assert False, "Should have raised ValueError for invalid dimensions"
+    except ValueError as e:
+        assert "dimensions incorrect" in str(e)
+
+
+def test_preprocess_sample_invalid_band_count():
+    """Test that preprocess_sample raises ValueError for invalid band count."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=False)
+
+    # Create sample data with invalid band count
+    sample_data = np.random.rand(128, 128, 7).astype(np.float32)
+
+    # Process the sample - should raise ValueError
+    try:
+        preprocessor.preprocess_sample(sample_data)
+        assert False, "Should have raised ValueError for invalid band count"
+    except ValueError as e:
+        assert "band count incorrect" in str(e)
+
+
+def test_preprocess_sample_channel_format_conversion():
+    """Test that preprocess_sample correctly handles channel format conversion."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=False)
+
+    # Test with channels-last format (H, W, C)
+    sample_data_hwc = np.random.rand(128, 128, 14).astype(np.float32)
+    processed_hwc = preprocessor.preprocess_sample(sample_data_hwc)
+    assert processed_hwc.shape == (14, 128, 128)  # Should convert to channel-first
+
+    # Test with channels-first format (C, H, W)
+    sample_data_chw = np.random.rand(14, 128, 128).astype(np.float32)
+    processed_chw = preprocessor.preprocess_sample(sample_data_chw)
+    assert processed_chw.shape == (14, 128, 128)  # Should remain channel-first
+
+
+def test_preprocess_sample_with_normalization():
+    """Test that preprocess_sample applies normalization when fitted."""
+    preprocessor = Landslide4SensePreprocessor(normalize_bands=True)
+
+    # Create fake training data and fit normalization
+    fake_data = np.random.rand(10, 128, 128, 14).astype(np.float32)
+    preprocessor.fit_normalization(fake_data)
+
+    # Create sample data
+    sample_data = np.random.rand(128, 128, 14).astype(np.float32)
+
+    # Process the sample
+    processed = preprocessor.preprocess_sample(sample_data)
+
+    # Check output shape and type
+    assert processed.shape == (14, 128, 128)
+    assert processed.dtype == np.float32
+
+    # Check that preprocessor is fitted
+    assert preprocessor.is_fitted() == True
 
 
 def test_preprocessor_repr():
@@ -158,7 +271,13 @@ def run_all_tests():
         test_convert_to_float32,
         test_preprocessor_not_implemented_methods,
         test_fit_normalization,
-        test_preprocess_sample_not_implemented,
+        test_preprocess_sample_with_valid_data,
+        test_preprocess_sample_with_nan_values,
+        test_preprocess_sample_with_inf_values,
+        test_preprocess_sample_invalid_dimensions,
+        test_preprocess_sample_invalid_band_count,
+        test_preprocess_sample_channel_format_conversion,
+        test_preprocess_sample_with_normalization,
         test_preprocessor_repr
     ]
 
@@ -168,10 +287,10 @@ def run_all_tests():
     for test_func in test_functions:
         try:
             test_func()
-            print(f"✓ {test_func.__name__}")
+            print(f"PASS: {test_func.__name__}")
             passed += 1
         except Exception as e:
-            print(f"✗ {test_func.__name__}: {e}")
+            print(f"FAIL: {test_func.__name__}: {e}")
             failed += 1
 
     print(f"\nPreprocessing Tests: {passed} passed, {failed} failed")

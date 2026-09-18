@@ -1,20 +1,20 @@
 """
 Tests for Landslide4Sense inference infrastructure.
 
-Tests only the infrastructure interfaces, not actual inference logic
-since no trained model exists in Phase 1.
+Tests both error conditions and successful inference when model is available.
 """
 
 import numpy as np
 from pathlib import Path
 from unittest.mock import patch
+import torch
 
 from phase6.image_analysis.inference.engine import (
     Landslide4SenseInferenceEngine,
     Landslide4SenseInferenceError
 )
 from phase6.image_analysis.models.loader import ImageModelNotAvailableError
-from phase6.image_analysis.preprocessing.landsat4sense import Landslide4SensePreprocessor
+from phase6.image_analysis.preprocessing.landslide4sense import Landslide4SensePreprocessor
 from phase6.image_analysis.models.loader import Landslide4SenseModelLoader
 
 
@@ -82,6 +82,46 @@ def test_run_inference_raises_error_on_inference_failure():
                 assert "Inference failed" in str(e)
 
 
+def test_run_inference_returns_success_when_model_available():
+    """Test that run_inference returns successful result when model is available."""
+    engine = Landslide4SenseInferenceEngine()
+
+    # Mock the model loader to simulate availability
+    with patch.object(engine.model_loader, 'is_model_available', return_value=True):
+        # Mock the preprocessor to return valid data
+        with patch.object(engine.preprocessor, 'load_sample') as mock_load_sample:
+            mock_load_sample.return_value = np.random.rand(128, 128, 14).astype(np.float32)
+
+            # Mock the preprocessor to return valid processed data
+            with patch.object(engine.preprocessor, 'preprocess_sample') as mock_preprocess:
+                mock_preprocess.return_value = np.random.rand(14, 128, 128).astype(np.float32)
+
+                # Mock the model loader to return a mock model
+                with patch.object(engine.model_loader, 'load_model') as mock_load_model:
+                    # Create a simple mock model that returns predictable output
+                    class MockModel:
+                        def eval(self):
+                            pass
+                        def __call__(self, x):
+                            # Return a tensor with shape (1, 1, 128, 128) filled with 0.6
+                            return torch.full((1, 1, 128, 128), 0.6)
+
+                    mock_model = MockModel()
+                    mock_load_model.return_value = mock_model
+
+                    # Run inference
+                    result = engine.run_inference(Path("/fake/sample.tif"))
+
+                    # Check that we got a successful result
+                    assert result["success"] == True
+                    assert "image_level_probability" in result
+                    assert isinstance(result["image_level_probability"], float)
+                    assert 0.0 <= result["image_level_probability"] <= 1.0
+                    assert result["model_available"] == True
+                    assert "processing_time_ms" in result
+                    assert result["note"] == "Real inference performed using Landslide4Sense model"
+
+
 def test_get_engine_status():
     """Test getting engine status."""
     engine = Landslide4SenseInferenceEngine()
@@ -138,6 +178,7 @@ def run_all_tests():
         test_is_ready_true_when_model_available,
         test_run_inference_raises_error_when_model_not_available,
         test_run_inference_raises_error_on_inference_failure,
+        test_run_inference_returns_success_when_model_available,
         test_get_engine_status,
         test_engine_ready_reflects_model_availability,
         test_inference_error_inheritance,
