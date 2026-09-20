@@ -10,7 +10,7 @@ MODEL_FILE = (
     PROJECT_ROOT
     / "phase3"
     / "model_training"
-    / "risk_model.joblib"
+    / "xgboost_tuned_risk_model.joblib"
 )
 
 
@@ -27,14 +27,19 @@ FEATURE_COLUMNS = [
 
 
 def load_model():
-    """Load the trained Phase 3 risk model."""
+    """Load the tuned XGBoost risk model and label encoder."""
 
     if not MODEL_FILE.exists():
         raise FileNotFoundError(
-            f"Risk model not found: {MODEL_FILE}"
+            f"Tuned XGBoost model not found: {MODEL_FILE}"
         )
 
-    return joblib.load(MODEL_FILE)
+    saved_model = joblib.load(MODEL_FILE)
+
+    return (
+        saved_model["model"],
+        saved_model["label_encoder"],
+    )
 
 
 def predict_risk(
@@ -48,14 +53,15 @@ def predict_risk(
     landslide_history,
 ):
     """
-    Predict risk level and class probabilities.
+    Predict risk level and class probabilities
+    using the tuned XGBoost model.
 
     Returns:
         Dictionary containing risk level,
         probabilities, and confidence.
     """
 
-    model = load_model()
+    model, label_encoder = load_model()
 
     input_data = pd.DataFrame(
         [[
@@ -71,16 +77,27 @@ def predict_risk(
         columns=FEATURE_COLUMNS,
     )
 
-    prediction = model.predict(input_data)[0]
+    # XGBoost returns the encoded class number.
+    prediction_encoded = model.predict(input_data)[0]
+
+    # Convert encoded class back to LOW / MEDIUM / HIGH.
+    prediction = label_encoder.inverse_transform(
+        [int(prediction_encoded)]
+    )[0]
 
     probabilities = model.predict_proba(input_data)[0]
 
-    classes = model.classes_
+    # Probability columns correspond to encoded class order.
+    class_indices = list(range(len(label_encoder.classes_)))
+
+    class_labels = label_encoder.inverse_transform(
+        class_indices
+    )
 
     probability_map = {
         str(label): float(probability)
         for label, probability in zip(
-            classes,
+            class_labels,
             probabilities,
         )
     }
@@ -96,10 +113,9 @@ def predict_risk(
 
 def main():
     print("\n============================================")
-    print("   PHASE 3.5.2 - RISK PROBABILITY ENGINE")
+    print("   PHASE 7 - TUNED XGBOOST RISK ENGINE")
     print("============================================\n")
 
-    # Test environmental conditions
     test_input = {
         "rainfall_mm": 180,
         "soil_moisture_pct": 85,
@@ -146,7 +162,7 @@ def main():
     )
 
     print("\n============================================")
-    print("     PHASE 3.5.2 COMPLETED")
+    print("     PHASE 7 XGBOOST INTEGRATION TEST")
     print("============================================\n")
 
 
