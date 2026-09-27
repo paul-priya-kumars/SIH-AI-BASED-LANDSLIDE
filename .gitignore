@@ -56,3 +56,5 @@ datasets/
 # Ignore Jupyter notebook checkpoints
 .ipynb_checkpoints/
 >>>>>>> 0b2f7b9 (Update GeoShield AI landslide project)
+
+TrainData.zip
