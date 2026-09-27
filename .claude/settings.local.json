@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"../landslide ai/backend/app/utils\")",
+      "Read(//c/Users/jayav/OneDrive/Desktop/landslide ai/backend/app/utils/**)"
+    ]
+  }
+}

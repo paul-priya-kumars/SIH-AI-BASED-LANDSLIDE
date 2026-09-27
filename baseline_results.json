@@ -1,0 +1,55 @@
+{
+  "model_load_time": 0.9064054489135742,
+  "average_inference_time": 0.056225220362345375,
+  "inference_times": [
+    0.08551549911499023,
+    0.04634690284729004,
+    0.03681325912475586
+  ],
+  "input_shapes": [
+    [
+      128,
+      128,
+      14
+    ],
+    [
+      128,
+      128,
+      14
+    ],
+    [
+      128,
+      128,
+      14
+    ]
+  ],
+  "output_shapes": [
+    [
+      128,
+      128
+    ],
+    [
+      128,
+      128
+    ],
+    [
+      128,
+      128
+    ]
+  ],
+  "probabilities": [
+    0.024960484355688095,
+    0.1433909684419632,
+    0.11054453253746033
+  ],
+  "model_info": {
+    "model_available": true,
+    "model_path": "checkpoints\\best_model.pth",
+    "model_version": "not-available-phase1",
+    "image_ai_enabled": true,
+    "cached_model": true,
+    "model_loaded": true,
+    "checkpoint_epoch": "unknown",
+    "checkpoint_best_val_dice": "unknown"
+  }
+}

@@ -1,0 +1,68 @@
+"""
+Risk Service (M1 Integration Point)
+====================================
+NOTE FOR M1 TEAM:
+In Phase 1, this service returns realistic mock predictions and heuristic assessments.
+In Phase 2, M1 will replace `get_risk_prediction` with real model inference (e.g., ONNX, PyTorch, or ML REST API call).
+Keep the method signature and return schema `RiskPredictionResponse` identical to prevent breaking the frontend.
+"""
+
+from datetime import datetime
+from typing import List
+from app.schemas.risk import RiskPredictionResponse
+
+def _calculate_mock_factors(latitude: float, longitude: float) -> List[str]:
+    # Nilgiris approximate bounding box: 11.2 - 11.6 N, 76.4 - 76.9 E
+    factors = []
+    if 11.35 <= latitude <= 11.45:
+        factors.append("Saturated colluvial regolith on steep slope")
+        factors.append("24h cumulative rainfall exceeding 120mm threshold")
+    else:
+        factors.append("Moderate antecedent moisture index")
+        
+    factors.append("Toe erosion near road embankments")
+    factors.append("Historical landslide inventory hotspot")
+    return factors
+
+def get_risk_prediction(latitude: float, longitude: float) -> RiskPredictionResponse:
+    """
+    Computes or retrieves landslide risk for a specified geographic coordinate.
+    Phase 1: Heuristic mock data based on Nilgiris region coordinates.
+    Phase 2: M1 will replace this implementation with AI/ML inference.
+    """
+    # Deterministic yet realistic variance based on coordinates
+    # Default benchmark location: Ooty center (11.41, 76.69)
+    dist_ooty = abs(latitude - 11.41) + abs(longitude - 76.69)
+    
+    if dist_ooty < 0.08:
+        risk_probability = 0.82
+        risk_level = "VERY_HIGH"
+        confidence = 0.91
+        location_name = "Ooty Valley Escarpment"
+    elif dist_ooty < 0.2:
+        risk_probability = 0.68
+        risk_level = "HIGH"
+        confidence = 0.87
+        location_name = "Nilgiris Mountain Corridor"
+    elif dist_ooty < 0.5:
+        risk_probability = 0.44
+        risk_level = "MODERATE"
+        confidence = 0.84
+        location_name = "Lower Ghat Foothills"
+    else:
+        risk_probability = 0.21
+        risk_level = "LOW"
+        confidence = 0.89
+        location_name = "Regional Plateau"
+
+    return RiskPredictionResponse(
+        latitude=round(latitude, 4),
+        longitude=round(longitude, 4),
+        location_name=location_name,
+        risk_probability=risk_probability,
+        risk_level=risk_level,
+        confidence=confidence,
+        factors=_calculate_mock_factors(latitude, longitude),
+        updated_at=datetime.utcnow(),
+        is_mock=True
+    )

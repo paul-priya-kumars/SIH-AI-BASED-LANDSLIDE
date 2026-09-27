@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 __pycache__/
 *.pyc
 *.pyo
@@ -6,3 +7,52 @@ __pycache__/
 venv/
 env/
 .env
+=======
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+backend/venv/
+*.db
+*.sqlite3
+
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Uploads (ignore files but keep directory)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDE / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Dataset and model artifacts (ignore large files)
+datasets/
+# Ignore model checkpoint and weight files
+*.pth
+*.pt
+*.ckpt
+*.model
+*.weights
+*.h5
+*.pb
+# Ignore training logs and outputs
+*.log
+*.out
+# Ignore any temporary files
+*.tmp
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+>>>>>>> 0b2f7b9 (Update GeoShield AI landslide project)
