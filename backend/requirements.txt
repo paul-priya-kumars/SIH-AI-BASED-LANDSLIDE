@@ -1,0 +1,25 @@
+fastapi==0.110.0
+uvicorn[standard]==0.28.0
+pydantic==2.6.4
+pydantic-settings==2.2.1
+sqlalchemy==2.0.28
+python-multipart==0.0.9
+python-dotenv==1.0.1
+aiofiles==23.2.1
+requests==2.31.0
+
+# Phase 4 observability / security (imported by backend.app)
+prometheus-client>=0.17.0
+slowapi>=0.1.9
+
+# ML runtime (risk_service + phase6 image model components)
+numpy
+torch
+torchvision
+joblib
+Pillow
+h5py
+
+# Tests
+pytest
+httpx
