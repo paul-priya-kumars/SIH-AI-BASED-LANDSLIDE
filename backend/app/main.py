@@ -21,7 +21,8 @@ from .routes import (
     reports_router,
     routes_router,
     ml_router,
-    batch_router
+    batch_router,
+    integration_router
 )
 from .logging import setup_logging, generate_request_id
 from .metrics import (
@@ -68,9 +69,9 @@ def check_database() -> str:
         return "error"
 
 def get_m1_model_path() -> str:
-    """Absolute path to the environmental M1 artifact (heuristic/mock model)."""
-    backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(backend_dir, "models", "landslide_model.pkl")
+    """Absolute path to the environmental M1 artifact (real Phase 3 model)."""
+    from .services.m1_model_service import resolve_m1_model_path
+    return resolve_m1_model_path()
 
 def get_m3_model_path() -> str:
     """Absolute path to the satellite M3 (Landslide4Sense) checkpoint.
@@ -86,12 +87,20 @@ def get_m3_model_path() -> str:
     return os.path.join(root_dir, "phase6", "image_analysis", "checkpoints", "best_model.pth")
 
 def check_environmental_m1_model() -> Dict:
-    """Check the environmental M1 artifact and report its status independently."""
+    """Check the environmental M1 artifact and report its status independently.
+
+    ``available`` is True only when the real Phase 3 artifact actually loads.
+    The forced-mock path is reported as status ``"mock"`` (never as a real
+    model) and never as ``available``.
+    """
     path = get_m1_model_path()
     try:
-        available = os.path.isfile(path)
+        from .services.m1_model_service import m1_model_service
+        available = m1_model_service.is_available()
         if available:
-            status = "mock" if settings.MOCK_M1_ML else "loaded"
+            status = "loaded"
+        elif settings.MOCK_M1_ML:
+            status = "mock"
         else:
             status = "not_found"
         return {"status": status, "path": path, "available": available}
@@ -102,7 +111,8 @@ def check_satellite_m3_model() -> Dict:
     """Check the satellite M3 (Landslide4Sense) checkpoint, independently of M1."""
     path = get_m3_model_path()
     try:
-        available = os.path.isfile(path)
+        from .services.m3_inference import m3_inference_service
+        available = m3_inference_service.is_available()
         return {"status": "loaded" if available else "not_found", "path": path, "available": available}
     except Exception:
         return {"status": "error", "path": path, "available": False}
@@ -277,6 +287,7 @@ app.include_router(reports_router, prefix=settings.API_V1_STR)
 app.include_router(routes_router, prefix=settings.API_V1_STR)
 app.include_router(ml_router, prefix=settings.API_V1_STR)
 app.include_router(batch_router, prefix=settings.API_V1_STR)
+app.include_router(integration_router, prefix=settings.API_V1_STR)
 
 # Middleware for request logging and metrics
 @app.middleware("http")

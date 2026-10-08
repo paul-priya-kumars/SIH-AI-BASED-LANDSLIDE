@@ -21,9 +21,16 @@ class ImageAIConfig:
     ENV_DATASET_PATH = "JARVIS_LANDSLIDE4SENSE_DATASET_PATH"
 
     # Default values
-    DEFAULT_MODEL_PATH = "./models/not_available"
-    DEFAULT_MODEL_VERSION = "not-available-phase1"
-    DEFAULT_IMAGE_AI_ENABLED = False
+    # Default to the genuinely trained checkpoint bundled with the repo
+    # (<repo>/phase6/image_analysis/checkpoints/best_model.pth).
+    _REPO_ROOT = Path(__file__).resolve().parents[2]
+    DEFAULT_MODEL_PATH = str(
+        _REPO_ROOT / "phase6" / "image_analysis" / "checkpoints" / "best_model.pth"
+    )
+    DEFAULT_MODEL_VERSION = "landslide4sense-unet-resnet34-epoch45"
+    # Enabled by default because the trained checkpoint is present; set
+    # JARVIS_IMAGE_AI_ENABLED=false to force the image model off.
+    DEFAULT_IMAGE_AI_ENABLED = True
     DEFAULT_DATASET_PATH = "./datasets/landsat4sense"
 
     def get_model_path(self) -> Path:

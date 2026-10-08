@@ -76,6 +76,8 @@ def _get_environment_data_uncached(latitude: float, longitude: float) -> Environ
         elevation = 2240.0
         ndvi = 0.43
         soil_sat = 86.0
+        river_level = 4.2
+        landslide_history = 1
         loc_name = "Ooty Catchment"
     elif dist_ooty < 0.2:
         # Coonoor / Kotagiri corridor
@@ -86,6 +88,8 @@ def _get_environment_data_uncached(latitude: float, longitude: float) -> Environ
         elevation = 1850.0
         ndvi = 0.52
         soil_sat = 74.0
+        river_level = 3.1
+        landslide_history = 1
         loc_name = "Nilgiris Slope Basin"
     else:
         # Lower elevation foothills
@@ -96,6 +100,8 @@ def _get_environment_data_uncached(latitude: float, longitude: float) -> Environ
         elevation = 620.0
         ndvi = 0.65
         soil_sat = 42.0
+        river_level = 1.4
+        landslide_history = 0
         loc_name = "Foothills Transition Zone"
 
     return EnvironmentDataResponse(
@@ -109,5 +115,11 @@ def _get_environment_data_uncached(latitude: float, longitude: float) -> Environ
         elevation=elevation,
         ndvi=ndvi,
         soil_saturation_pct=soil_sat,
+        # M1 features (river_level_m, landslide_history) come from this demo
+        # provider, so the environment response stays is_mock=True even though
+        # the M1 model that consumes them is real.
+        river_level_m=river_level,
+        landslide_history=landslide_history,
+        data_source="MOCK_ENVIRONMENT_PROVIDER",
         is_mock=True
     )

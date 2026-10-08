@@ -154,7 +154,7 @@ def test_health_reports_m1_and_m3_independently():
     # The two models must not share the same artifact path.
     assert data["environmental_m1"]["path"] != data["satellite_m3"]["path"]
     assert data["environmental_m1"]["path"].replace("\\", "/").endswith(
-        "backend/models/landslide_model.pkl"
+        "phase3/model_training/risk_model.joblib"
     )
     if not os.environ.get("JARVIS_IMAGE_MODEL_PATH"):
         assert data["satellite_m3"]["path"].replace("\\", "/").endswith(

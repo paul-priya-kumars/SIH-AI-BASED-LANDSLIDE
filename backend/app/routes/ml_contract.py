@@ -7,9 +7,27 @@ In Phase 2, M1 will replace this mock handler with the actual neural network / g
 
 from fastapi import APIRouter
 from ..schemas.risk import MLPredictRequest, MLPredictResponse
+from ..services.m1_model_service import M1_FEATURE_NAMES, m1_model_service
 import os
 import joblib
 import logging
+
+# Legacy feature names accepted from older clients, mapped to the canonical
+# Phase 3 8-feature contract.
+_M1_FEATURE_ALIASES = {
+    "rainfall": "rainfall_mm",
+    "slope": "slope_deg",
+    "elevation": "elevation_m",
+    "ndvi": "vegetation_index",
+    "soil_moisture": "soil_moisture_pct",
+    "temperature": "temperature_c",
+    "river_level": "river_level_m",
+}
+
+
+def _normalize_m1_features(features):
+    """Map legacy feature keys onto the canonical M1 feature names."""
+    return {_M1_FEATURE_ALIASES.get(k, k): v for k, v in (features or {}).items()}
 
 # Global variable for model
 _model = None
@@ -57,7 +75,24 @@ def predict_landslide_risk(payload: MLPredictRequest) -> MLPredictResponse:
     * Phase 1 (M3): Stubs response with heuristic prediction based on input rainfall and slope features.
     * Phase 2 (M1): Uses actual model inference (e.g., CatBoost, XGBoost, or PyTorch).
     """
-    # Try to load the model (only loads once)
+    # Prefer the REAL Phase 3 M1 model when the full 8-feature contract is supplied.
+    real_features = _normalize_m1_features(payload.features or {})
+    if m1_model_service.is_available():
+        missing = [name for name in M1_FEATURE_NAMES if real_features.get(name) is None]
+        if not missing:
+            prediction = m1_model_service.predict(real_features)
+            return MLPredictResponse(
+                risk_probability=prediction["risk_probability"],
+                risk_level=prediction["risk_level"],
+                confidence=prediction["confidence"],
+                factors=[
+                    "Phase 3 RandomForest environmental model (8-feature contract): "
+                    f"predicted {prediction['predicted_class']}"
+                ],
+                model_version=prediction["model_version"],
+            )
+
+    # Legacy contract fallback (local artifact, then heuristic mock)
     model_available = _load_model()
 
     if model_available and _model is not None:

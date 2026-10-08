@@ -6,6 +6,7 @@ import { EnvironmentalCard } from '../components/dashboard/EnvironmentalCard';
 import { LocationCard } from '../components/dashboard/LocationCard';
 import { AlertCard } from '../components/dashboard/AlertCard';
 import { QuickActions } from '../components/dashboard/QuickActions';
+import { IntegrationStatusCard } from '../components/dashboard/IntegrationStatusCard';
 import { LoadingState } from '../components/common/LoadingState';
 import { ErrorState } from '../components/common/ErrorState';
 import { Bell, ShieldCheck, Flame, ArrowRight, RefreshCw, Zap, Server, Database } from 'lucide-react';
@@ -233,6 +234,12 @@ export const HomePage: React.FC = () => {
               lastUpdated={riskData.lastUpdated}
             />
           )}
+
+          {/* Real M1/M2/M3 integration status (honest availability per component) */}
+          <IntegrationStatusCard
+            latitude={location.latitude}
+            longitude={location.longitude}
+          />
 
           {/* Active Advisories Card Section */}
           <div className="p-6 rounded-3xl glass-card border-slate-800 shadow-xl">

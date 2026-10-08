@@ -5,6 +5,7 @@ from .reports import router as reports_router
 from .routes import router as routes_router
 from .ml_contract import router as ml_router
 from .batch import router as batch_router
+from .integration import router as integration_router
 
 __all__ = [
     "risk_router",
@@ -13,5 +14,6 @@ __all__ = [
     "reports_router",
     "routes_router",
     "ml_router",
-    "batch_router"
+    "batch_router",
+    "integration_router"
 ]

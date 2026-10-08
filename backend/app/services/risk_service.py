@@ -33,46 +33,52 @@ except ImportError as e:
     logger.warning(f"Could not import Landslide4sense model components: {e}")
     LANDSLIDE4SENSE_MODEL_AVAILABLE = False
 
-# Global variables for model
+from .m1_model_service import (
+    m1_model_service,
+    resolve_m1_model_path,
+    build_feature_vector_from_environment,
+    M1_FEATURE_NAMES,
+)
+
+# Global variables for the M1 environmental model (real Phase 3 artifact).
 _model = None
 _model_loaded = False
-_model_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "checkpoints", "best_model.pth")
+_model_path = resolve_m1_model_path()
 
-# Global variables for Landslide4sense model
+# Global variables for the M3 (Landslide4Sense) satellite model.
 _landsat_model = None
 _landsat_preprocessor = None
 _landsat_model_loaded = False
+_m3_checkpoint_path = os.environ.get("JARVIS_IMAGE_MODEL_PATH") or os.path.join(
+    os.path.dirname(__file__), "..", "..", "..",
+    "phase6", "image_analysis", "checkpoints", "best_model.pth",
+)
 
 def _load_model():
-    """Load the M1 ML model if available.
+    """Load the real Phase 3 M1 environmental risk model.
 
     Returns:
-        bool: True if model is loaded successfully, False otherwise
+        bool: True when the real artifact is loaded; False when it is
+        unavailable or the mock path is forced via ``MOCK_M1_ML``.
     """
     global _model, _model_loaded
 
     if _model_loaded:
         return _model is not None
 
+    _model_loaded = True
+
+    if settings.MOCK_M1_ML:
+        logger.info("MOCK_M1_ML enabled - M1 environmental model intentionally bypassed")
+        _model = None
+        return False
+
     try:
-        if os.path.exists(_model_path):
-            try:
-                _model = joblib.load(_model_path)
-                _model_loaded = True
-                logger.info(f"ML model loaded from {_model_path}")
-                return True
-            except Exception as e:
-                logger.error(f"Error loading ML model from {_model_path}: {e}")
-                _model_loaded = True
-                _model = None
-                return False
-        else:
-            logger.info(f"No ML model found at {_model_path}")
-            _model_loaded = True
-            return False
+        _model = m1_model_service.get_model()
+        logger.info(f"Real M1 model loaded from {m1_model_service.model_path}")
+        return True
     except Exception as e:
-        logger.error(f"Unexpected error checking for ML model at {_model_path}: {e}")
-        _model_loaded = True
+        logger.info(f"Real M1 model unavailable ({e}); using heuristic risk")
         _model = None
         return False
 
@@ -101,20 +107,35 @@ def _load_landsat_model():
     """
     global _landsat_model, _landsat_preprocessor, _landsat_model_loaded
 
+    if _landsat_model_loaded:
+        return _landsat_model is not None
+
     if not LANDSLIDE4SENSE_MODEL_AVAILABLE:
         logger.info("Landslide4Sense model components not available")
         _landsat_model_loaded = True
         return False
 
+    # No coordinate -> patch mapping exists (the dataset carries no geographic
+    # metadata), so the satellite checkpoint can never serve a lat/lon request.
+    # Skip loading the ~295MB of weights here; use the dedicated M3 endpoint for
+    # explicit patch inference instead.
+    if not _check_geographic_metadata_available():
+        logger.info(
+            "M3 satellite checkpoint intentionally not loaded for coordinate requests "
+            "(no coordinate->patch mapping available)"
+        )
+        _landsat_model_loaded = True
+        return False
+
     try:
-        if os.path.exists(_model_path):
+        if os.path.exists(_m3_checkpoint_path):
             # Load checkpoint with proper handling for PyTorch 2.6+ weights_only security feature
             try:
                 # First try with weights_only=True (secure default)
-                checkpoint = torch.load(_model_path, map_location='cpu', weights_only=True)
+                checkpoint = torch.load(_m3_checkpoint_path, map_location='cpu', weights_only=True)
             except Exception:
                 # If that fails, use weights_only=False since we trust our own checkpoint files
-                checkpoint = torch.load(_model_path, map_location='cpu', weights_only=False)
+                checkpoint = torch.load(_m3_checkpoint_path, map_location='cpu', weights_only=False)
 
             # Initialize model
             _landsat_model = UNetResNet34(
@@ -133,11 +154,11 @@ def _load_landsat_model():
                 band_stds=np.array(preprocessor_state["band_stds"]) if preprocessor_state.get("band_stds") is not None else None,
             )
 
-            logger.info(f"Landslide4Sense model loaded from {_model_path}")
+            logger.info(f"Landslide4Sense model loaded from {_m3_checkpoint_path}")
             _landsat_model_loaded = True
             return True
         else:
-            logger.info(f"No Landslide4Sense model found at {_model_path}")
+            logger.info(f"No Landslide4Sense model found at {_m3_checkpoint_path}")
             _landsat_model_loaded = True
             return False
     except Exception as e:
@@ -220,9 +241,13 @@ def _get_risk_prediction_uncached(latitude: float, longitude: float) -> RiskPred
     # Phase 2: Use real Landslide4Sense model if available and geographic metadata is available
     if landsat_model_available and _landsat_model is not None and _landsat_preprocessor is not None and _check_geographic_metadata_available():
         try:
-            # For now, using a fixed image for demonstration/testing purposes
-            # In a real implementation with geographic metadata, we would map lat/lon to the appropriate image patch
-            sample_image_path = r"C:\Users\jayav\OneDrive\Desktop\land 2\datasets\landslide4sense\train\images\image_1.h5"
+            # No coordinate -> patch mapping exists (the dataset has no
+            # geographic metadata), so this branch stays disabled. When a real
+            # mapping is added, the patch to analyse is configured explicitly.
+            sample_image_path = os.environ.get("JARVIS_SAMPLE_IMAGE_PATH") or os.path.join(
+                os.path.dirname(__file__), "..", "..", "..",
+                "phase6", "image_analysis", "checkpoints", "sample_patch.h5",
+            )
 
             # Load and preprocess the satellite image
             import h5py
@@ -270,8 +295,8 @@ def _get_risk_prediction_uncached(latitude: float, longitude: float) -> RiskPred
                 else:
                     risk_level = "LOW"
 
-                # Default confidence (can be enhanced based on model uncertainty)
-                confidence = 0.91
+                # Confidence is the segmentation peak probability (no hard-coded value)
+                confidence = image_level_probability
 
                 # Generate risk factors (combine environmental insights with model prediction)
                 factors = _calculate_mock_factors(latitude, longitude)
@@ -295,59 +320,57 @@ def _get_risk_prediction_uncached(latitude: float, longitude: float) -> RiskPred
             logger.error(f"Error during Landslide4Sense prediction: {e}")
             raise InferenceError(model_type="Landslide4Sense")
 
-    # Fallback to mock implementation (Phase 1 behavior)
-    # Try to load traditional ML model as secondary fallback
+    # Real M1 environmental model (Phase 3 artifact) — primary path.
     if model_available and _model is not None:
-        # Use real ML model for prediction
         try:
-            # Get environmental features from M2 service
-            env_data = get_environment_data(latitude, longitude)
-
-            # Prepare features for the model (rainfall, slope, elevation, ndvi)
-            features = [[env_data.rainfall, env_data.slope, env_data.elevation, env_data.ndvi]]
-
-            # Get prediction probability
-            if hasattr(_model, "predict_proba"):
-                risk_probability = float(_model.predict_proba(features)[0][1])
-            else:
-                # Fallback for models without predict_proba
-                risk_probability = float(_model.predict(features)[0])
-
-            # Clamp probability to valid range
-            risk_probability = max(0.0, min(1.0, risk_probability))
-
-            # Determine risk level
-            if risk_probability >= 0.75:
-                risk_level = "VERY_HIGH"
-            elif risk_probability >= 0.55:
-                risk_level = "HIGH"
-            elif risk_probability >= 0.35:
-                risk_level = "MODERATE"
-            else:
-                risk_level = "LOW"
-
-            # Default confidence (can be enhanced based on model)
-            confidence = 0.91
-
-            # Generate risk factors
-            factors = _calculate_mock_factors(latitude, longitude)
-
-            location_name = env_data.location_name or "Predicted Location"
-
-            return RiskPredictionResponse(
-                latitude=round(latitude, 4),
-                longitude=round(longitude, 4),
-                location_name=location_name,
-                risk_probability=round(risk_probability, 4),
-                risk_level=risk_level,
-                confidence=confidence,
-                factors=factors,
-                updated_at=datetime.utcnow(),
-                is_mock=False  # REAL MODEL IS BEING USED
-            )
+            features = build_feature_vector_from_environment(env_data)
         except Exception as e:
-            logger.error(f"Error during ML prediction: {e}")
-            raise InferenceError(model_type="ML")
+            logger.warning(f"M1 feature vector unavailable ({e}); using heuristic risk")
+            features = None
+
+        if features is not None:
+            try:
+                proba = _model.predict_proba([features])[0]
+                classes = [str(c) for c in getattr(_model, "classes_", [])]
+                if not classes or len(classes) != len(proba):
+                    raise ValueError("model did not expose usable class labels")
+
+                prob_map = {label: float(p) for label, p in zip(classes, proba)}
+                predicted = max(prob_map, key=prob_map.get)
+
+                # Documented in docs/RISK_ENGINE.md:
+                #   risk_probability = P(class == HIGH)
+                #   confidence       = max class probability (from the model itself)
+                risk_probability = max(0.0, min(1.0, float(prob_map.get("HIGH", 0.0))))
+                risk_level = {
+                    "LOW": "LOW",
+                    "MEDIUM": "MODERATE",
+                    "MODERATE": "MODERATE",
+                    "HIGH": "HIGH",
+                    "VERY_HIGH": "VERY_HIGH",
+                }.get(predicted, predicted)
+                confidence = max(0.0, min(1.0, float(max(proba))))
+
+                # Generate risk factors
+                factors = _calculate_mock_factors(latitude, longitude)
+                factors.append("Phase 3 RandomForest environmental model (8-feature contract)")
+
+                location_name = env_data.location_name or "Predicted Location"
+
+                return RiskPredictionResponse(
+                    latitude=round(latitude, 4),
+                    longitude=round(longitude, 4),
+                    location_name=location_name,
+                    risk_probability=round(risk_probability, 4),
+                    risk_level=risk_level,
+                    confidence=confidence,
+                    factors=factors,
+                    updated_at=datetime.utcnow(),
+                    is_mock=False  # REAL M1 MODEL IS BEING USED
+                )
+            except Exception as e:
+                logger.error(f"Error during ML prediction: {e}")
+                raise InferenceError(model_type="ML")
 
     # Final fallback to mock implementation (Phase 1 behavior)
     dist_ooty = abs(latitude - 11.41) + abs(longitude - 76.69)

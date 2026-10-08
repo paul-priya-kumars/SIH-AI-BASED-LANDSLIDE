@@ -19,7 +19,9 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploads")
     MAX_UPLOAD_SIZE_MB: int = 10
 
-    MOCK_M1_ML: bool = True
+    # Real Phase 3 M1 artifact is present -> prefer it. Set to True to force the
+    # heuristic mock risk path (the M1 artifact is then reported as "mock").
+    MOCK_M1_ML: bool = False
     MOCK_M2_GIS: bool = True
 
     # Observability settings
