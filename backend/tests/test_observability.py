@@ -130,3 +130,37 @@ def test_ml_predict_endpoint():
     assert "confidence" in data
     assert "factors" in data
     assert "model_version" in data
+
+def test_health_reports_m1_and_m3_independently():
+    """M1 (environmental) and M3 (satellite) must report their own artifact paths."""
+    response = client.get("/api/health")
+    assert response.status_code == 200
+    data = response.json()
+
+    for key in ("environmental_m1", "satellite_m3"):
+        assert key in data, f"missing {key} in health response"
+        entry = data[key]
+        assert isinstance(entry, dict), f"{key} must be an object"
+        assert set(entry) >= {"status", "path", "available"}
+        assert isinstance(entry["status"], str)
+        assert entry["path"], f"{key} must report a concrete artifact path"
+        assert isinstance(entry["available"], bool)
+        # `available` must agree with the reported status (no fabricated availability)
+        if entry["available"]:
+            assert entry["status"] in ("loaded", "mock")
+        else:
+            assert entry["status"] in ("not_found", "error")
+
+    # The two models must not share the same artifact path.
+    assert data["environmental_m1"]["path"] != data["satellite_m3"]["path"]
+    assert data["environmental_m1"]["path"].replace("\\", "/").endswith(
+        "backend/models/landslide_model.pkl"
+    )
+    if not os.environ.get("JARVIS_IMAGE_MODEL_PATH"):
+        assert data["satellite_m3"]["path"].replace("\\", "/").endswith(
+            "phase6/image_analysis/checkpoints/best_model.pth"
+        )
+
+    # Legacy flat keys remain consistent with the nested objects.
+    assert data["environmental_m1_model"] == data["environmental_m1"]["status"]
+    assert data["satellite_m3_model"] == data["satellite_m3"]["status"]

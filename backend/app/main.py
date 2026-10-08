@@ -67,36 +67,45 @@ def check_database() -> str:
     except Exception:
         return "error"
 
-def check_environmental_m1_model() -> str:
-    """Check environmental M1 model availability and return status."""
-    try:
-        from backend.app.services.risk_service import _model_path
-        if os.path.exists(_model_path):
-            # Check if we're using mock or real model based on settings
-            if settings.MOCK_M1_ML:
-                return "mock"
-            else:
-                return "loaded"
-        else:
-            return "not_found"
-    except Exception:
-        return "error"
+def get_m1_model_path() -> str:
+    """Absolute path to the environmental M1 artifact (heuristic/mock model)."""
+    backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(backend_dir, "models", "landslide_model.pkl")
 
-def check_satellite_m3_model() -> str:
-    """Check satellite M3 model availability and return status."""
+def get_m3_model_path() -> str:
+    """Absolute path to the satellite M3 (Landslide4Sense) checkpoint.
+
+    Honors the configured JARVIS_IMAGE_MODEL_PATH when set; otherwise uses the
+    Phase 6 checkpoint location. Never falls back to the M1 artifact path, so
+    the two models are always reported independently.
+    """
+    root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    configured = os.environ.get("JARVIS_IMAGE_MODEL_PATH")
+    if configured:
+        return configured if os.path.isabs(configured) else os.path.join(root_dir, configured)
+    return os.path.join(root_dir, "phase6", "image_analysis", "checkpoints", "best_model.pth")
+
+def check_environmental_m1_model() -> Dict:
+    """Check the environmental M1 artifact and report its status independently."""
+    path = get_m1_model_path()
     try:
-        # The satellite_m3_model is the Landsat model, which uses the same _model_path as the M1 model
-        from backend.app.services.risk_service import _model_path
-        if os.path.exists(_model_path):
-            # Check if we're using mock or real model based on settings
-            if settings.MOCK_M1_ML:
-                return "mock"
-            else:
-                return "loaded"
+        available = os.path.isfile(path)
+        if available:
+            status = "mock" if settings.MOCK_M1_ML else "loaded"
         else:
-            return "not_found"
+            status = "not_found"
+        return {"status": status, "path": path, "available": available}
     except Exception:
-        return "error"
+        return {"status": "error", "path": path, "available": False}
+
+def check_satellite_m3_model() -> Dict:
+    """Check the satellite M3 (Landslide4Sense) checkpoint, independently of M1."""
+    path = get_m3_model_path()
+    try:
+        available = os.path.isfile(path)
+        return {"status": "loaded" if available else "not_found", "path": path, "available": available}
+    except Exception:
+        return {"status": "error", "path": path, "available": False}
 
 def check_environment_service() -> str:
     """Check environment service availability and return status."""
@@ -417,7 +426,6 @@ def root():
 @app.get("/api/health", tags=["System"])
 def health_check(request: Request):
     from backend.app.config import settings
-    from backend.app.services.risk_service import _model_path
     from backend.app.services.environment_service import get_environment_data
     from backend.app.cache import get_prediction_cache
 
@@ -427,14 +435,14 @@ def health_check(request: Request):
         database_status = "error"
 
     try:
-        environmental_m1_model_status = check_environmental_m1_model()
+        environmental_m1_status = check_environmental_m1_model()
     except Exception:
-        environmental_m1_model_status = "error"
+        environmental_m1_status = {"status": "error", "path": get_m1_model_path(), "available": False}
 
     try:
-        satellite_m3_model_status = check_satellite_m3_model()
+        satellite_m3_status = check_satellite_m3_model()
     except Exception:
-        satellite_m3_model_status = "error"
+        satellite_m3_status = {"status": "error", "path": get_m3_model_path(), "available": False}
 
     try:
         environment_service_status = check_environment_service()
@@ -446,12 +454,13 @@ def health_check(request: Request):
     except Exception:
         cache_status = "error"
 
-    # Determine overall status - healthy if all critical components are loaded or mock
-    # For now, consider it healthy if no errors
+    # Determine overall status - healthy unless a component reported an error
     all_good = all([
-        status != "error"
-        for status in [database_status, environmental_m1_model_status, satellite_m3_model_status,
-                      environment_service_status, cache_status]
+        database_status != "error",
+        environmental_m1_status["status"] != "error",
+        satellite_m3_status["status"] != "error",
+        environment_service_status != "error",
+        cache_status != "error",
     ])
     status = "healthy" if all_good else "unhealthy"
 
@@ -461,8 +470,13 @@ def health_check(request: Request):
     response = {
         "status": status,
         "database": database_status,
-        "environmental_m1_model": environmental_m1_model_status,
-        "satellite_m3_model": satellite_m3_model_status,
+        # M1 (environmental) and M3 (satellite) are reported independently,
+        # each pointing at its own artifact path.
+        "environmental_m1": environmental_m1_status,
+        "satellite_m3": satellite_m3_status,
+        # Backward-compatible flat status strings (deprecated).
+        "environmental_m1_model": environmental_m1_status["status"],
+        "satellite_m3_model": satellite_m3_status["status"],
         "environment_service": environment_service_status,
         "cache": cache_status
     }
